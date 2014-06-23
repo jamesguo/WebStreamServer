@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+<script language="javascript">
+	function searchFiles(){
+        var fso = new ActiveXObject("Scripting.FileSystemObject");
+        var f = fso.GetFolder("d://Users//yrguo//Desktop//nginx-1.6.0//html//video");
+        var fc = new Enumerator(f.files);
+        var s = "";
+        var i=0;
+        for (; !fc.atEnd(); fc.moveNext())
+            {
+                var type=new Option(fc.item(),fc.item());
+                document.note.types.options.add(type);
+
+            }
+    }
+</script>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+<script type="text/javascript">searchFiles();</script>
+</body>
+</html>

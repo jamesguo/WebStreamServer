@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>视频播放</title>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script language="javascript">
+	function GetRequest() {
+	   var url = location.search; //获取url中"?"符后的字串
+	   var theRequest = new Object();
+	   if (url.indexOf("?") != -1) { 
+	      var str = url.substr(1);
+	      strs = str.split("&");
+	      for(var i = 0; i < strs.length; i ++) { 
+	         theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+	      }
+	   }
+   	return theRequest;
+	}
+</script>
+</head>
+<style type="text/css">
+video#div1{
+    position:inherit;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+    z-index:-1;
+}       
+</style>
+ 
+<body>
+<video id="div1" poster="/poster.jpg" src=""  width="100%" controls="controls" autoplay="false" preload='no'>
+<!-- <video id="div1" src="http://v.youku.com/player/getRealM3U8/vid/XNDE4NjIwOTI0/type//video.m3u8"  width="100%" controls="controls" autoplay="false" preload='no'>
+ -->	
+Your browser does not support the video tag.
+</video>
+<script  type="text/javascript" >
+var Request = new Object();
+Request = GetRequest();
+var path = Request['src'];
+$("#div1").attr("src",new String(path));//更新url
+$("#div1").attr("autoplay","true");//直接播放
+</script>
+
+</body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html>
+<head>
+	<title>test video</title>
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+	<script language="javascript">
+	function GetRequest() {
+	   var url = location.search; //获取url中"?"符后的字串
+	   var theRequest = new Object();
+	   if (url.indexOf("?") != -1) { 
+	      var str = url.substr(1);
+	      strs = str.split("&");
+	      for(var i = 0; i < strs.length; i ++) { 
+	         theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+	      }
+	   }
+   	return theRequest;
+	}
+	</script>
+</head>
+<body>
+	<div>
+		<input type="text" placeholder="enter video url to play." id="t_url">
+		<input type="button" value="play" id="t_btn">
+		<video src="movie.ogg" controls="controls" autoplay="false" id="v_video" preload='no'>
+			您的浏览器不支持 video 标签。
+		</video>
+	</div>
+	<script type="text/javascript">
+		$(function(){
+			$("#t_btn").click(function(){
+				if(!$("#t_url").val()){
+					alert("url不能为空.");
+				}else{
+					$("#v_video").attr("src",$("#t_url").val());//更新url
+					$("#v_video").attr("autoplay","true");//直接播放
+				}
+			});
+		});
+	</script>
+</body>
+</html> -->
