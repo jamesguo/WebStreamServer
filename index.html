@@ -39,3 +39,94 @@ Commercial support is available at
 <script type="text/javascript">searchFiles();</script>
 </body>
 </html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>js 操作table</title>
+
+<script type="text/javascript">
+
+        var tb;
+        var lastIndex=0;
+function AddSignRow(obj){
+    tb=tb|| document.getElementById("SignFrame");
+    var tr=tb.insertRow(tb.rows.length);
+    lastIndex++;
+    if(document.all)
+    {
+        var td;
+        var i=0;
+        td=tr.insertCell(i++);
+        td.innerHTML=lastIndex;
+        for(;i<=5;i++){
+              td=tr.insertCell(i);
+            td.innerHTML="<input type=text />";
+        }
+          td=tr.insertCell(i);
+          td.innerHTML="<input type='button' value='删除' onclick='delRow(this)' />";
+    }else{
+        tr.innerHTML = "<td >"+lastIndex+"</td><a href='#' onclick=''>"+obj+"</a>";
+    }
+}
+
+function getParentRow(obj)
+{
+    var r = obj.parentNode; 
+    while(r!=null && r.tagName!="TR") { 
+         r = r.parentNode; 
+    } 
+    return r; 
+}
+//删除所有
+function DeleteAll(){
+    tb=tb|| document.getElementById("SignFrame");
+    if(document.all)
+    {
+        for(var i=tb.childNodes.length-1;i>=0;i--){
+            tb.removeChild(tb.childNodes[i]);
+        }
+    }else{
+        tb.innerHTML="";
+    }
+    lastIndex=0;
+}
+
+function disPlayCell(t,c,isDisplay)
+{   
+    c=parseInt(c);
+    if(t && t.rows && t.rows.length >0)
+    {
+        for(var i=0;i<t.rows.length;i++)
+        {
+            if(c<t.rows[i].cells.length)
+            {
+                t.rows[i].cells[c].style.display= isDisplay?"block":"none";
+            }
+        }
+    }
+}
+
+</script>
+</head>
+<body>
+<div>
+<table width="613" border="0" cellpadding="2" cellspacing="1" >
+   <thead id="trHeader">
+   <tr>
+    <td width="20%" bgcolor="#96E0E2">序号</td>
+    <td width="80%" bgcolor="#96E0E2">视频名称</td>
+    </tr>
+   </thead>
+   <tbody id="SignFrame" bgcolor="#96E0E2">
+   </tbody>
+</table>
+</div>
+<div>
+<input type="button"  value="添加参与人" onclick="AddSignRow(new String('sdf'))" />
+<input type="button"  value="清空" onclick="ClearAllSign()" />
+<input type="button"  value="删除所有" onclick="DeleteAll()" />
+</div>
+
+</body>
+
+</html>
