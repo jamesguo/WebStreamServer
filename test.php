@@ -6,6 +6,7 @@
     <title>视频文件列表</title>
 </head>
 <body>
+
 <?php
 // include_once("../../config/config.php");
 // // PHP 5.3 以后可以 直接用 魔术变量 __DIR__ 这个 = dirname(__FILE__)
@@ -41,7 +42,7 @@ for ($i = 0; $i < count($files); $i++) {
     echo '<tr>';
     echo "<td >" . $i . "</td>";
     // echo '<td onclick="/video.html?/src="/video/'.basename($files[$i]).'">'.basename($files[$i]).'</td>';
-    echo '<td><a href=/video.html?src=/video/' . basename($files[$i]) . '>' . basename($files[$i]) . '</a></td>';
+    echo '<td><a href=/video.html?path=\\video\\test\\' .str_replace("/","\\", basename($files[$i])) . '>' . basename($files[$i]) . '</a></td>';
     echo '</tr>';
 }
 echo '</tbody>

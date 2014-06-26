@@ -1,0 +1,569 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>HTML5 Demos</title>
+    <script src="/js/jquery.min.js" type="text/javascript"></script>
+    <meta charset="utf-8"/>
+    <!-- CSS Styles -->
+    <style type="text/css">
+
+        body 
+        {
+            background: url("html5-body-background.png") no-repeat fixed center top #000;
+            font-family: Calibri, "Trebuchet MS", "lucida grande", Arial, sans-serif;
+            color: White;
+        }
+        
+        #container
+        {
+            width: 900px;
+            margin: 0 auto;
+        }
+        
+        #container.small
+        {
+            width: 600px;
+        }
+        
+        #container a img
+        {
+            border: 0 none;
+        }        
+        
+        #header
+        {
+            font-family: Courier New, Courier, serif;
+            font-size: 42px;
+            width: 900px;
+            margin-top: 30px;
+        }        
+        
+        #movieContainer
+        {
+            width: 100%;
+            margin: 30px auto 0;
+            background: rgb(47, 47, 47);
+            background: rgba(70, 70, 70, 0.7);
+            padding: 10px;
+        }
+        
+        #movieContainer a 
+        {
+            color: #F4E90C;
+        }
+        
+        
+        #infoIcon
+        {
+            float: left;
+            margin-right: 10px;
+        }
+        
+        #dwpLogo
+        {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            margin: 10px;
+        }
+        
+        #movie
+        {
+            width: 100%; height: 505px;
+            background: #111;
+            margin: 0 auto;
+        }
+        
+        .paused #movie
+        {
+            width: 100%
+        }
+        
+        .small #movie
+        {
+            height: 337px;
+        }
+        
+        #controls
+        {
+            margin-top: 10px;
+        }
+        
+        #controls input 
+        {
+            background: rgb(70,70,70);
+            padding: 4px 5px; margin: 0;
+            border: 0 none;
+            color: White;
+            font-family: Calibri, "Trebuchet MS", "lucida grande", Arial, sans-serif;
+            cursor: pointer;
+            
+            -moz-border-radius: 2px;
+            -webkit-border-radius: 2px;
+            border-radius: 2px;
+        }
+        
+        #controls input:hover
+        {
+            background: #0CC3F4;
+        }
+        
+        #controls select
+        {
+            background: rgb(70,70,70);
+            padding: 4px 3px; margin: 0;
+            border: 0 none;
+            color: White;
+            font-family: Calibri, "Trebuchet MS", "lucida grande", Arial, sans-serif;
+            cursor: pointer;
+
+            -moz-border-radius: 2px;
+            -webkit-border-radius: 2px;
+            border-radius: 2px;
+        }
+        
+        #controls .selected
+        {
+            background: #BEDB12 !important;
+            color: Black !important;
+        }
+        
+        #status
+        {
+            float: right;
+        }
+        
+        #time
+        {
+            font-size: 14px;   
+        }
+        
+        #progress
+        {
+            height: 100%;
+            background: #F4E90C;
+            width: 0;
+        }
+
+        #seekBar
+        {
+            height: 8px;
+            margin: 0 0 0 0;
+            width: 100%;
+            background: rgb(105, 92, 0);
+            cursor: pointer;
+            
+            -moz-transition-property: margin, height;
+            -moz-transition-duration: 100ms;
+            -webkit-transition-property: margin, height;
+            -webkit-transition-duration: 100ms;
+            transition-property: margin, height;
+            transition-duration: 100ms;
+        }
+        
+        #seekBar:hover
+        {
+            height: 12px;
+            margin: 0 0 -4px 0;
+        }
+        
+        
+    </style>
+
+    
+    <!-- JavaScript -->
+    <script type="text/javascript">
+        /*************************************
+        Start-up Functions
+        *************************************/
+        function GetRequest() {
+            var url = location.search; //获取url中"?"符后的字串
+            var theRequest = new Object();
+            if (url.indexOf("?") != -1) {
+                var str = url.substr(1);
+                var strs = str.split("&");
+                for (var i = 0; i < strs.length; i++) {
+                    theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+                }
+            }
+            return theRequest;
+        }
+        function movieInit()
+        {
+            movie = document.getElementById('movie');
+            showCommand("movie = document.getElementById('movie');");
+			var Request = new Object();
+			Request = GetRequest();
+			var path = Request['src'];
+			
+            // Populate movie picker
+            movies = [  {   "name":"MP4",
+                            "src": path,
+                            "poster": "",
+                            "mimetype": "video/mp4",
+                            "codecs":"avc1.6400xx, mp4a.40.2",
+                            "type":"MP4 (H.264)"
+                        },
+						{   "name":"MKV",
+                            "src": path,
+                            "poster": "",
+                            "mimetype": "video/mp4",
+                            "codecs":"avc1.6400xx, mp4a.40.2",
+                            "type":"MKV (H.264)"
+                        }
+                    ];
+            createMoviePicker();
+            
+            // Add Event Listeners
+            addEvents();
+
+            // If DWP HTML5 add extra controls
+            try
+            {
+                if (movie.GetVersion())
+                {
+                    addDWPControls();
+                }
+            }
+            catch (e) { }
+            
+        }
+
+        function addEvents()
+        {
+            // Event Listeners
+            if (window.addEventListener)
+            {
+                movie.addEventListener('timeupdate', function () { eventTimeUpdate() }, false);
+                movie.addEventListener('ended', function () { eventEnded() }, false);
+                movie.addEventListener('play', function () { eventPlay() }, false);
+                movie.addEventListener('pause', function () { eventPause() }, false);
+                movie.addEventListener('volumechange', function () { eventVolumeChange() }, false);
+                movie.addEventListener('playing', function () { eventPlaying() }, false);
+                movie.addEventListener('error', function () { eventError() }, false);
+            }
+            else // IE
+            {
+                movie.attachEvent('ontimeupdate', eventTimeUpdate);
+                movie.attachEvent('onended', eventEnded);
+                movie.attachEvent('onplay', eventPlay);
+                movie.attachEvent('onpause', eventPause);
+                movie.attachEvent('onvolumechange', eventVolumeChange);
+                movie.attachEvent('onplaying', eventPlaying);
+            }
+
+            showCommand("movie.addEventListener('timeupdate', function () { eventTimeUpdate() }, false);");
+            showCommand("movie.addEventListener('ended', function () { eventEnded() }, false);");
+            showCommand("movie.addEventListener('play', function () { eventPlay() }, false);");
+            showCommand("movie.addEventListener('pause', function () { eventPause() }, false);");
+            showCommand("movie.addEventListener('volumechange', function () { eventVolumeChange() }, false);");
+            showCommand("movie.addEventListener('playing', function () { eventPlaying() }, false);");
+
+            // Onclick event for seeking
+            $('#seekBar').click(function (e)
+            {
+                var offset = $(this).offset();
+                var x = e.pageX - (offset.left);
+                var width = $(this).width();
+                var percent = (x / width);
+
+                seekPercent(percent);
+            });
+        }
+
+        /*************************************
+            Control Functions
+        *************************************/
+
+        function addDWPControls()
+        {
+            var fullscreen = ' <input type="button" value="Fullscreen" onclick="fullScreen()" id="fullscreen" />';
+            var windowed = ' <input type="button" value="Pop Out" onclick="windowed()" id="popout" />';
+
+            $('#bigSmall').after(fullscreen);
+        }
+
+        function changeMovie(id)
+        {
+            if (checkType(movies[id].mimetype))
+            {
+                movie.src = movies[id].src;
+                movie.poster = movies[id].poster;
+                movie.play();
+
+                $('#movieContainer').removeClass('paused');
+
+                showCommand("movie.src = '" + movies[id].src + "';");
+                showCommand("movie.poster = '" + movies[id].poster + "';");
+                showCommand("movie.play();");
+            }
+            else
+            {
+                eventError(4);
+            }
+        }
+
+        function togglePlayPause()
+        {
+            if (movie.paused || movie.playbackRate == 0 || movie.ended)
+            {
+                movie.play();
+                showCommand("movie.play();");
+            }
+            else
+            {
+                movie.pause();
+                showCommand("movie.pause();");
+            }
+        }
+
+        function toggleControls()
+        {
+            if (movie.controls)
+            {
+                movie.controls = false
+                $('#toggleControls').removeClass('selected');
+                showCommand("movie.controls = false");
+            }
+            else
+            {
+                movie.controls = true;
+                $('#toggleControls').addClass('selected');
+                showCommand("movie.controls = true");
+            }
+        }
+
+        function toggleMute()
+        {
+            if (movie.muted)
+            {
+                movie.muted = false;
+                showCommand("movie.muted = false;");
+            }
+            else
+            {
+                movie.muted = true;
+                showCommand("movie.muted = true;");
+            }
+        }
+
+        function toggleBigSmall()
+        {
+            if ($('#container').hasClass('small'))
+            {
+                $('#container').removeClass('small');
+                $('#bigSmall').val('Small');
+                showCommand("$('#container').removeClass('small');");
+                showCommand("$('#bigSmall').val('Small');");
+            }
+            else
+            {
+                $('#container').addClass('small');
+                $('#bigSmall').val('Big');
+                showCommand("$('#container').addClass('small');");
+                showCommand("$('#bigSmall').val('Big');");
+            }
+        }
+
+        function fullScreen()
+        {
+            movie.GoFullscreen();
+            showCommand("movie.GoFullscreen();");
+        }
+
+        function windowed()
+        {
+            movie.GoWindowed();
+            showCommand("movie.GoWindowed();");
+        }
+
+        /*************************************
+        Event Listener Functions
+        *************************************/
+
+        function eventTimeUpdate()
+        {
+            var displayTime = convertSecondsToTime(movie.currentTime);
+            var duration = convertSecondsToTime(movie.duration);
+            var html = displayTime + " / " + duration;
+            $('#time').html(html);
+
+            var progress = ((movie.currentTime / movie.duration) * 100) + '%';
+            $('#progress').width(progress);
+
+            // Only show command message once per second
+            if (typeof (lastTime) == "undefined") { lastTime = -1; }
+            var currentTime = Math.floor(movie.currentTime);
+            if (currentTime > lastTime)
+            {
+                lastTime = Math.floor(movie.currentTime);
+                showCommand('Event Triggered: timeupdate');
+            }
+        }
+
+        function eventEnded()
+        {
+            $('#movieContainer').addClass('paused');
+            $('#playPause').val('Play').addClass('selected'); ;
+            showCommand('Event Triggered: ended');
+        }
+
+        function eventPlay()
+        {
+            $('#movieContainer').removeClass('paused');
+            $('#playPause').val('Pause').removeClass('selected');
+            showCommand('Event Triggered: play');
+        }
+
+        function eventPause()
+        {
+            $('#movieContainer').addClass('paused');
+            $('#playPause').val('Play').addClass('selected');
+            showCommand('Event Triggered: pause');
+        }
+
+        function eventPlaying()
+        {
+            $('#movieContainer').removeClass('paused');
+            $('#playPause').val('Pause').removeClass('selected');
+            showCommand('Event Triggered: playing');
+        }
+
+        function eventVolumeChange()
+        {
+            if (movie.muted)
+            {
+                $('#mute').addClass("selected");
+            }
+            else
+            {
+                $('#mute').removeClass("selected");
+            }
+            showCommand('Event Triggered: volumechange');
+        }
+
+        function eventError(errorCode)
+        {
+            if (typeof (errorCode) == 'undefined')
+            {
+                var errorCode = movie.error.code;
+            }
+
+            switch (errorCode)
+            {
+                case 4:
+                    alert('Your web browser does not support this popular video format.\n\r\n\Get the DivX Plus Web Player 2.1 with HTML5 support to watch this video. http://labs.divx.com/webplayer');
+                    break;
+            }
+        }
+
+        /*************************************
+        Misc Functions
+        *************************************/
+
+        function showCommand(msg)
+        {
+            
+        }
+
+        function seekPercent(percent)
+        {
+            var time = movie.duration * percent;
+            movie.currentTime = time;
+
+            showCommand("movie.currentTime = " + time + ";");
+        }
+
+        function convertSecondsToTime(i)
+        {
+            var t = new Date(i * 1000);
+
+            var minutes = t.getMinutes();
+
+            if (t.getSeconds() < 10)
+            {
+                var seconds = "0" + t.getSeconds();
+            }
+            else
+            {
+                var seconds = t.getSeconds();
+            }
+
+            var time = minutes + ":" + seconds;
+
+            return time;
+        }
+
+        function createMoviePicker() {
+            var selected = "selected";
+            var options = "";
+            var supportedFiles = 0;
+
+            for (var i = 0; i < movies.length; i++)
+            {
+                options += "<option " + selected + " value='" + i + "'>" + movies[i].name + "</option>";
+                selected = "";
+
+                if (checkType(movies[i].mimetype))
+                {
+                    supportedFiles++;
+                }
+            }
+
+            $('#moviePicker').html(options);
+
+            // Tell users to get DWP if no files are supported
+            if (supportedFiles == 0)
+            {
+                var getDwp = "<a href='http://labs.divx.com/webplayer' target='_BLANK'>Get the DivX Plus Web Player</a> for hardware accelerated HTML5 &lt;video&gt;";
+                $('#status').html(getDwp);
+            }
+        }
+
+        function checkType(mimetype)
+        {
+            var playable = movie.canPlayType(mimetype);
+            if (playable == "maybe" || playable == "probably")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    </script>
+
+
+</head>
+<body onload="movieInit()">
+    <div id="container">
+        <div id="header">DivX Plus Web Player - HTML5</div>
+        <div id="movieContainer" class="paused">
+            <video
+                id="movie"
+                src=""
+                poster="poster.jpg"
+                type="video/mp4">
+            </video>
+            <div id="seekBar">
+                <div id="progress"></div>
+            </div>
+            <div id="controls">
+                <div id="status">
+                    <span id="time"></span>
+                </div>
+                <select id="moviePicker" onchange="changeMovie(this.value)">
+                </select>
+                <input type="button" value="Play" onclick="togglePlayPause()" id="playPause" class="selected" />
+                <input type="button" value="Controls" onclick="toggleControls()" id="toggleControls" />
+                <input type="button" value="Mute" onclick="toggleMute()" id="mute" />
+                <input type="button" value="Small" onclick="toggleBigSmall()" id="bigSmall" />
+            </div>
+        </div>
+    </div>
+ 
+</body>
+</html>

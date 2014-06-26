@@ -9,124 +9,19 @@
         font-family: Tahoma, Verdana, Arial, sans-serif;
     }
 </style>
-<script language="javascript">
-	function searchFiles(){
-        var fso = new ActiveXObject("Scripting.FileSystemObject");
-        var f = fso.GetFolder("d://Users//yrguo//Desktop//nginx-1.6.0//html//video");
-        var fc = new Enumerator(f.files);
-        var s = "";
-        var i=0;
-        for (; !fc.atEnd(); fc.moveNext())
-            {
-                var type=new Option(fc.item(),fc.item());
-                document.note.types.options.add(type);
-
-            }
-    }
-</script>
 </head>
 <body>
-<h1>Welcome to nginx!</h1>
-<p>If you see this page, the nginx web server is successfully installed and
-working. Further configuration is required.</p>
-
-<p>For online documentation and support please refer to
-<a href="http://nginx.org/">nginx.org</a>.<br/>
-Commercial support is available at
-<a href="http://nginx.com/">nginx.com</a>.</p>
-
-<p><em>Thank you for using nginx.</em></p>
-<script type="text/javascript">searchFiles();</script>
+$url = "/video/test.mp3";
+<object classid="clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95" id="media" type="application/x-oleobject" border="0" width="400" height="280" standby="Loading Microsoft?Windows?Media Player components...">
+    <param name="Filename" value="<?=$url ?>" />      <!-- 需要播放的文件名 -->
+    <param name="PlayCount" value="1" /> <!-- 文件播放的次数 -->
+    <param name="AutoStart" value="1" />  <!-- 播放的方式：1为自动播放，0为按键播放 -->
+    <param name="ClickToPlay" value="0" />  <!-- 鼠标点击暂定播放：1为可以，0为不可以 -->
+    <param name="DisplaySize" value="0" /> <!-- 画面大小：0原始大小，1一半大小，2为两倍大小 -->
+    <param name="EnableFullScreen Control" value="0" /><!--控制切换大屏：1为允许，0为不允许  -->
+    <param name="ShowAudio Control" value="0" /><!-- 控制音量：1为允许，0为不允许-->
+    <param name="EnableContext Menu" value="0" /><!--控制菜单 ：1为允许，0为不允许-->
+    <param name="ShowDisplay" value="0" /><!--显示电影版权  -->
+</object>
 </body>
-</html>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>js 操作table</title>
-
-<script type="text/javascript">
-
-        var tb;
-        var lastIndex=0;
-function AddSignRow(obj){
-    tb=tb|| document.getElementById("SignFrame");
-    var tr=tb.insertRow(tb.rows.length);
-    lastIndex++;
-    if(document.all)
-    {
-        var td;
-        var i=0;
-        td=tr.insertCell(i++);
-        td.innerHTML=lastIndex;
-        for(;i<=5;i++){
-              td=tr.insertCell(i);
-            td.innerHTML="<input type=text />";
-        }
-          td=tr.insertCell(i);
-          td.innerHTML="<input type='button' value='删除' onclick='delRow(this)' />";
-    }else{
-        tr.innerHTML = "<td >"+lastIndex+"</td><a href='#' onclick=''>"+obj+"</a>";
-    }
-}
-
-function getParentRow(obj)
-{
-    var r = obj.parentNode; 
-    while(r!=null && r.tagName!="TR") { 
-         r = r.parentNode; 
-    } 
-    return r; 
-}
-//删除所有
-function DeleteAll(){
-    tb=tb|| document.getElementById("SignFrame");
-    if(document.all)
-    {
-        for(var i=tb.childNodes.length-1;i>=0;i--){
-            tb.removeChild(tb.childNodes[i]);
-        }
-    }else{
-        tb.innerHTML="";
-    }
-    lastIndex=0;
-}
-
-function disPlayCell(t,c,isDisplay)
-{   
-    c=parseInt(c);
-    if(t && t.rows && t.rows.length >0)
-    {
-        for(var i=0;i<t.rows.length;i++)
-        {
-            if(c<t.rows[i].cells.length)
-            {
-                t.rows[i].cells[c].style.display= isDisplay?"block":"none";
-            }
-        }
-    }
-}
-
-</script>
-</head>
-<body>
-<div>
-<table width="613" border="0" cellpadding="2" cellspacing="1" >
-   <thead id="trHeader">
-   <tr>
-    <td width="20%" bgcolor="#96E0E2">序号</td>
-    <td width="80%" bgcolor="#96E0E2">视频名称</td>
-    </tr>
-   </thead>
-   <tbody id="SignFrame" bgcolor="#96E0E2">
-   </tbody>
-</table>
-</div>
-<div>
-<input type="button"  value="添加参与人" onclick="AddSignRow(new String('sdf'))" />
-<input type="button"  value="清空" onclick="ClearAllSign()" />
-<input type="button"  value="删除所有" onclick="DeleteAll()" />
-</div>
-
-</body>
-
 </html>

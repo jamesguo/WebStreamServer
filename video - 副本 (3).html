@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>视频播放</title>
+	<script type="text/javascript" src="http://pan.baidu.com/res/static/thirdparty/flashvideo/js/cyberplayer.min.js"></script> 
+    <script language="javascript">
+        function GetRequest() {
+            var url = location.search; //获取url中"?"符后的字串
+            var theRequest = new Object();
+            if (url.indexOf("?") != -1) {
+                var str = url.substr(1);
+                var strs = str.split("&");
+                for (var i = 0; i < strs.length; i++) {
+                    theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+                }
+            }
+            return theRequest;
+        }
+    </script>
+</head>
+<style type="text/css">
+    video#div1 {
+        position: inherit;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: -1;
+    }
+</style>
+
+<body>
+<div id="playercontainer"></div>
+<script type="text/javascript"> 
+var Request = new Object();
+Request = GetRequest();
+var path = Request['src'];
+var player = cyberplayer("playercontainer").setup({ 
+flashplayer:"/player/cyberplayer.flash.swf",
+width : 680, 
+height : 400, 
+backcolor : "#FFFFFF", 
+stretching : "uniform", 
+file : path,
+autoStart : false, 
+repeat : "always", 
+volume : 80, 
+controlbar : "over", 
+ak: "PxexkwYwGt1GQg9KPBdHfdUn",
+sk: "c5uSEAbZ7x8knL2jLqyItFfCwG8aloim"});
+player.play();
+</script>
+
+</body>
+</html>
